@@ -41,12 +41,7 @@ Ext.define("TDK.mainpage", {
               icon: vconfig.getstyle + "/icon/cancel.png",
               handler: "ondelete"
             },
-            "->",
-            { 
-              text: 'Download',
-              handler: 'onDownload',
-              icon: vconfig.getstyle + "/icon/excel.ico"
-            }
+          
           ]
         },
       ]
