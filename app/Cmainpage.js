@@ -1,0 +1,96 @@
+Ext.define("TDK.Cmainpage", {
+  extend: "Ext.app.ViewController",
+  alias: "controller.Cmainpage",
+  init: function (view) {
+    this.control({});
+    this.tdk_aes = "app-tdk-2024";
+    this.task_area();
+    this.renderpage();
+  },
+  task_area: function () {
+    try {
+    } catch (err) {
+      COMP.TipToast.msgbox("Error", err.message, { cls: "danger", delay: 2000 });
+    }
+  },
+  renderpage: function () { 
+   
+  },
+
+  onNewInput: function(btn) {
+    try {
+      var mainpage = btn.up('mainpage');
+      var grid = mainpage.down('grid'); // ambil grid di dalam mainpage
+      var store = grid.getStore();      // baru ambil store dari grid
+      var popup = Ext.create("TDK.Fromrc", {
+        gridStore: store
+    });
+      // popup.mainpage = mainpage
+      popup.show();
+    } catch (ex) {
+      COMP.TipToast.msgbox("Error", ex.message, { cls: "danger", delay: 2000 });
+    }
+  },
+
+  onGridDblClick: function(grid, record) {
+    try {
+
+    var form = Ext.create("TDK.Fromrc");
+      form.down('form').loadRecord(record);  // Load data ke form
+      form.recordData = record;          // kirim record
+      form.gridStore = grid.getStore();  // kirim store
+      form.show();
+
+  } catch (ex) {
+    Ext.Msg.alert('Error', ex.message);
+  }
+},
+
+onSave: function(btn) {
+    var win   = btn.up('window');    
+    var form = win.down('form').getForm();
+    var store = win.gridStore;        // STORE GRID
+   
+  if (!form.isValid()) {
+        Ext.Msg.alert('Info', 'Form belum lengkap');
+        return;
+    }
+
+    var values = form.getValues();
+    if (win.recordData) {
+    win.recordData.set(values);
+    } else {
+        store.add(values);
+    }
+
+    // store.add(values);
+    store.sync();
+
+    win.close();
+},
+
+onCancel: function(btn){
+    btn.up('window').close();
+},
+
+ondelete: function(btn) {
+  var mainpage = btn.up('mainpage');
+  var grid = mainpage.down('grid')
+  var store = grid.getStore();
+  var record = grid.getSelection()[0];
+
+  if(!record){
+    Ext.Msg.alert("Info", "Data harus dipilih terlebih dahulu");
+    return;
+  }
+
+  Ext.Msg.confirm('Konfirmasi', 'Yakin ingin menghapus data?', function(answer) {
+  if  (answer === 'yes') {
+      store.remove(record);
+      store.sync()
+    }
+  })
+}
+
+  
+});
